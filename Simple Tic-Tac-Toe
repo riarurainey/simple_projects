@@ -1,0 +1,94 @@
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
+public class Main {
+    final static char X = 'X';
+    final static char O = 'O';
+    private static boolean isGameOn = true;
+
+    public static void main(String[] args) {
+        int count = 0;
+        char ch;
+        StringBuilder enter = new StringBuilder("_________");
+        printField(enter);
+
+        while (isGameOn) {
+            if (count % 2 == 1) {
+                ch = 'O';
+            } else {
+                ch = 'X';
+            }
+            enterCoordinates(enter, ch);
+            count++;
+        }
+    }
+
+    private static void enterCoordinates(StringBuilder enter, char n) {
+        Scanner scanner = new Scanner(System.in);
+        try {
+            int i = scanner.nextInt();
+            int j = scanner.nextInt();
+            if (isValid(i, j)) {
+                putStep(enter, i, j, n);
+                printField(enter);
+                
+                if (checkWinner(enter, n)) {
+                    System.out.println(n + " wins!");
+                    isGameOn = false;
+                } else if (!checkTheField(enter)) {
+                    printField(enter);
+                    System.out.println("Draw");
+                    isGameOn = false;
+                }
+                
+            } else {
+                System.out.println("Coordinates should be from 1 to 3!");
+                enterCoordinates(enter, n);
+            }
+            
+        } catch (InputMismatchException e) {
+            System.out.println("You should enter numbers!");
+            enterCoordinates(enter, n);
+        }
+    }
+
+    private static void printField(StringBuilder enter) {
+        System.out.println("---------");
+        System.out.println("| " + enter.charAt(0) + " " + enter.charAt(1) + " " + enter.charAt(2) + " |");
+        System.out.println("| " + enter.charAt(3) + " " + enter.charAt(4) + " " + enter.charAt(5) + " |");
+        System.out.println("| " + enter.charAt(6) + " " + enter.charAt(7) + " " + enter.charAt(8) + " |");
+        System.out.println("---------");
+    }
+
+    private static boolean isValid(int i, int j) {
+        return (i >= 1 && i <= 3 && j >= 1 && j <= 3);
+    }
+
+    private static void putStep(StringBuilder enter, int i, int j, char n) {
+        int check = (i - 1) * 3 + (j - 1);
+
+        if (enter.charAt(check) != '_') {
+            System.out.println("This cell is occupied! Choose another one!");
+            enterCoordinates(enter, n);
+
+        } else {
+            enter.setCharAt(check, n);
+        }
+    }
+
+    private static boolean checkTheField(StringBuilder enter) {
+        return enter.toString().contains("_");
+    }
+    
+    private static boolean checkWinner(StringBuilder enter, char n) {
+
+        return (enter.charAt(0) == n && enter.charAt(1) == n && enter.charAt(2) == n) ||
+                (enter.charAt(3) == n && enter.charAt(4) == n && enter.charAt(5) == n) ||
+                (enter.charAt(6) == n && enter.charAt(7) == n && enter.charAt(8) == n) ||
+                (enter.charAt(0) == n && enter.charAt(3) == n && enter.charAt(6) == n) ||
+                (enter.charAt(1) == n && enter.charAt(4) == n && enter.charAt(7) == n) ||
+                (enter.charAt(2) == n && enter.charAt(5) == n && enter.charAt(8) == n) ||
+                (enter.charAt(0) == n && enter.charAt(4) == n && enter.charAt(8) == n) ||
+                (enter.charAt(2) == n && enter.charAt(4) == n && enter.charAt(6) == n);
+    }
+}
